@@ -1,5 +1,6 @@
 import express from "express"
 import { TrainModel } from "common/types";
+import {prismaClient} from 'db'
 
 const app = express();
 
