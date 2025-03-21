@@ -2,6 +2,9 @@
   "name": "common",
   "module": "index.ts",
   "type": "module",
+  "exports": {
+    "./types": "./types.ts"
+  },
   "private": true,
   "devDependencies": {
     "@types/bun": "latest"

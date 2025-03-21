@@ -1,4 +1,5 @@
 import express from "express"
+import { TrainModel } from "common/types";
 
 const app = express();
 
