@@ -12,3 +12,85 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id               String @id @default(uuid())
+  username         String
+  profilePicture   String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+  
+
+model Model {
+  id                 String @id @default(uuid())
+  name               String 
+  age                Int
+  type               ModelTypeEnum
+  Ethenecity         EthenecityEnum
+  eyeColor           eyeColorEnum
+  bald               Boolean
+  trainingImages     TrainingImages[]
+  outputImages       OutputImages[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model TrainingImages {
+  id                   String @id @default(uuid())
+  imageUrl             String
+  modelId              String
+  model                Model      @relation(fields: [modelId], references: [id])
+}
+
+model OutputImages {
+  id                   String @id   @default(uuid())
+  imageUrl             String
+  modelId              String
+   model               Model      @relation(fields: [modelId], references: [id])
+   userId              String
+   createdAt           DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Packs {
+  id         String @id @default(uuid())
+  name       String
+  prompts    PackPrompts[]
+}
+
+model PackPrompts {
+  id           String @id @default(uuid())
+  prompt       String
+  packId       String
+  pack         Packs    @relation(fields: [packId], references: [id])
+}
+
+  enum ModelTypeEnum {
+    Man 
+    Woman
+    Other
+  }
+  enum EthenecityEnum {
+   
+        White
+        Black
+         AsianAmerican
+         EastAsian
+         SouthEastAsian
+        SouthAsian
+         MiddleEastern
+        Pacific
+        Hispanic
+   
+  }
+
+  enum eyeColorEnum {
+    Brown
+    Blue
+    Black
+    Grey
+    Green
+    Hazel
+  }
