@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "ai-image-generator",
   "private": true,
   "scripts": {
     "build": "turbo run build",
