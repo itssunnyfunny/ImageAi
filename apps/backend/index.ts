@@ -1,7 +1,9 @@
 import express from "express"
 import "./types"
 import { TrainModel ,GenerateImage, GenerateImagesFromPack} from "common/types";
-import {prismaClient} from 'db'
+import {prismaClient} from 'db';
+ 
+let USER_ID = "1";
 
 const app = express();
 
@@ -23,7 +25,8 @@ app.post("/ai/training", async(req, res)=> {
           age: parsedBody.age,
            Ethenecity: parsedBody.Ethenecity,
             eyeColor: parsedBody.eyeColor,
-             bald: parsedBody.bald     
+             bald: parsedBody.bald  ,
+             userId:    USER_ID
             }  
 })
 
