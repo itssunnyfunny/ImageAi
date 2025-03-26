@@ -4,14 +4,14 @@ import { z } from "zod";
     name: z.string(),
     type: z.enum(["Man", "Woman", "Other"]),
     age: z.number(),
-    ethinicity: z.enum([
+    Ethenecity: z.enum([
         "White", 
         "Black",
-         "Asian American",
-         "East Asian",
-         "South East Asian",
-          "South Asian",
-         "Middle Eastern",
+         "Asian_American",
+         "East_Asian",
+         "South_East_Asian",
+          "South_Asian",
+         "Middle_Eastern",
         "Pacific",
         "Hispanic"
     ]),

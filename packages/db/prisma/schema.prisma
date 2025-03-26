@@ -76,11 +76,11 @@ model PackPrompts {
    
         White
         Black
-         AsianAmerican
-         EastAsian
-         SouthEastAsian
-        SouthAsian
-         MiddleEastern
+         Asian_American
+         East_Asian
+         South_East_Asian
+        South_Asian
+         Middle_Eastern
         Pacific
         Hispanic
    
