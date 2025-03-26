@@ -30,20 +30,69 @@ app.post("/ai/training", async(req, res)=> {
             }  
 })
 
-res.status(201).json({
+res.json({
     modelId : data.id,
     message: "Model created successfully"
 })
 })
 
-app.post("/ai/generate", (req, res)=> {
-    
+app.post("/ai/generate", async(req, res)=> {
+    const parsedBody = GenerateImage.parse(req.body);
+    if (!parsedBody) {
+        res.status(400).json({
+            message: "Invalid request body"
+        });
+        return
+    }   
+     const data = await prismaClient.outputImages.create({
+data: { 
+    prompt: parsedBody.prompt,
+    userId: USER_ID,
+    modelId: parsedBody.modelId,
+    imageUrl: "",
+}
 })
-app.post("/pack/generate", (req, res)=> {
+res.json({
+    imageId: data.id,
+    message: "Image generated successfully"
+})
+});
+
+app.post("/pack/generate", async(req, res)=> {
+    const parsedBody = GenerateImagesFromPack.parse(req.body);
+    if (!parsedBody) {
+        res.status(400).json({
+            message: "Invalid request body"
+        });
+        return
+    }
+     const prompt = await prismaClient.packPrompts.findMany({
+        where: {    
+            packId: parsedBody.packId
+        }
+    })
     
+    const data = await prismaClient.outputImages.createManyAndReturn({   
+        data: prompt.map((p)=> {
+            return {
+                prompt: p.prompt,
+                userId: USER_ID,
+                modelId: parsedBody.modelId,
+                imageUrl: ""
+            }
+        })
+    })
+
+    res.json({
+        images: data.map((d)=> d.id),
+        message: "Image pack generated successfully"
+    })
 })
 app.get("/pack/bulk", (req, res)=> {
-    
+    const packs = prismaClient.packs.findMany({});
+    res.json({
+        packs
+    })
 })
 
 app.get("/image", (req, res)=> {
