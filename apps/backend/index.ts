@@ -1,5 +1,4 @@
 import express from "express"
-import "./types"
 import { TrainModel ,GenerateImage, GenerateImagesFromPack} from "common/types";
 import {prismaClient} from 'db';
  
@@ -95,8 +94,25 @@ app.get("/pack/bulk", (req, res)=> {
     })
 })
 
-app.get("/image", (req, res)=> {
-    
+app.get("/image/bulk", (req, res)=> {
+    const ids = req.query.images as string[];
+    const limit = req.query.limit as string || "10";
+    const offset = req.query.offset as string || "0";
+
+    const data = prismaClient.outputImages.findMany({
+        where: {
+            id: {
+                in: ids
+            },
+            userId: USER_ID
+        },
+        skip: parseInt(offset),
+        take: parseInt(limit)
+    })
+
+    res.json({
+        images: data
+    })
 })
 
 app.listen(PORT, ()=> {
