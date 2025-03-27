@@ -113,7 +113,15 @@ app.get("/image/bulk", (req, res)=> {
     res.json({
         images: data
     })
+});
+
+app.post("fal-ai/webhook", (req, res)=> {
+    console.log(req.body);  
+    res.json({  
+        message: "Webhook received"
+    })
 })
+
 
 app.listen(PORT, ()=> {
     console.log("Server is running on port 8080");
