@@ -115,13 +115,33 @@ app.get("/image/bulk", (req, res)=> {
     })
 });
 
-app.post("fal-ai/webhook/train", (req, res)=> {
+app.post("fal-ai/webhook/train", async(req, res)=> {
     console.log(req.body);  
-    const requestId = req.body.request_id;          
+    const requestId = req.body.request_id; 
+           await prismaClient.model.updateManyAndReturn({
+            where: { falAiRequestId: requestId },
+            data: { 
+                 tensorPath: req.body.tensor_path,
+                 status: "Generated",
+             }
 
 });
-app.post("fal-ai/webhook/image", (req, res)=> {
+
+    res.json({  
+        message: "Webhook received"
+    })
+}
+)
+app.post("fal-ai/webhook/image", async (req, res)=> {
     console.log(req.body);  
+    const requestId = req.body.request_id; 
+           await prismaClient.outputImages.updateManyAndReturn({
+            where: { falAiRequestId: requestId },
+            data: {
+                 imageUrl: req.body.image_url,
+                 status: "Generated",
+             }
+});
     res.json({  
         message: "Webhook received"
     })
