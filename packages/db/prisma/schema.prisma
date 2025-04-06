@@ -38,22 +38,17 @@ model Model {
   triggerWords        String?
   tensorPath        String?
   trainingStatus     modelTraningStatusEnum @default(Pending)
-  trainingImages     TrainingImages[]
   outputImages       OutputImages[]
   userId             String
   falAiRequestId    String?
   status            modelTraningStatusEnum @default(Pending)
+  zipUrl           String
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   @@index([falAiRequestId])
 }
 
-model TrainingImages {
-  id                   String @id @default(uuid())
-  imageUrl             String
-  modelId              String
-  model                Model      @relation(fields: [modelId], references: [id])
-}
+
 
 model OutputImages {
   id                   String @id   @default(uuid())

@@ -22,7 +22,7 @@ app.post("/ai/training", async(req, res)=> {
 }
 
 
- const{request_id}= await falAiModel.trainModel( "",parsedBody.name );
+ const{request_id}= await falAiModel.trainModel( parsedBody.zipUrl,parsedBody.name );
 
  const data =   await prismaClient.model.create({
     data: {name : parsedBody.name,
