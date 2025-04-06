@@ -1,9 +1,10 @@
 import express from "express"
 import { TrainModel ,GenerateImage, GenerateImagesFromPack} from "common/types";
 import {prismaClient} from 'db';
+import { FalAiModel } from "./Models/FalAiModel";
  
 let USER_ID = "1";
-
+const falAiModel = new FalAiModel();
 const app = express();
 
 const PORT = process.env.PORT || 8080;
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.post("/ai/training", async(req, res)=> {
  const parsedBody = TrainModel.parse(req.body);
+  const  images = req.body.images;
   
      if (!parsedBody) {
        res.status(400).json({
@@ -18,6 +20,10 @@ app.post("/ai/training", async(req, res)=> {
         });
         return
 }
+
+
+ const{request_id}= await falAiModel.trainModel( "",parsedBody.name );
+
  const data =   await prismaClient.model.create({
     data: {name : parsedBody.name,
          type: parsedBody.type,
@@ -25,7 +31,8 @@ app.post("/ai/training", async(req, res)=> {
            Ethenecity: parsedBody.Ethenecity,
             eyeColor: parsedBody.eyeColor,
              bald: parsedBody.bald  ,
-             userId:    USER_ID
+             userId:    USER_ID,
+             falAiRequestId: request_id,
             }  
 })
 
@@ -42,13 +49,29 @@ app.post("/ai/generate", async(req, res)=> {
             message: "Invalid request body"
         });
         return
-    }   
+    } ;
+    const model = await prismaClient.model.findUnique({
+        where: {
+            id: parsedBody.modelId,
+            userId: USER_ID
+        }
+    });
+    if (!model || !model.tensorPath) {
+        res.status(404).json({
+            message: "Model not found"
+        });
+        return
+    }
+
+
+    const {request_id} = await falAiModel.generateImage(parsedBody.prompt, model.tensorPath);
      const data = await prismaClient.outputImages.create({
 data: { 
     prompt: parsedBody.prompt,
     userId: USER_ID,
     modelId: parsedBody.modelId,
     imageUrl: "",
+    falAiRequestId: request_id,
 }
 })
 res.json({
