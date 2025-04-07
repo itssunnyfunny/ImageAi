@@ -2,6 +2,7 @@ import express from "express"
 import { TrainModel ,GenerateImage, GenerateImagesFromPack} from "common/types";
 import {prismaClient} from 'db';
 import { FalAiModel } from "./Models/FalAiModel";
+import { S3Client } from "bun";
  
 let USER_ID = "1";
 const falAiModel = new FalAiModel();
@@ -9,6 +10,20 @@ const app = express();
 
 const PORT = process.env.PORT || 8080;
 app.use(express.json());
+
+app.get("/pre-signed-url", async(req, res)=> {
+    const key = `models/${Date.now()}_${Math.random()}.zip`
+  const url =  S3Client.presign(key, {
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_KEY,
+    bucket: process.env.S3_BUCKET,
+    expiresIn: 60 * 5, // 5 minutes
+} )
+    res.json({
+        url,
+        key
+    })
+    } ) 
 
 app.post("/ai/training", async(req, res)=> {
  const parsedBody = TrainModel.parse(req.body);
@@ -33,6 +48,7 @@ app.post("/ai/training", async(req, res)=> {
              bald: parsedBody.bald  ,
              userId:    USER_ID,
              falAiRequestId: request_id,
+             zipUrl: parsedBody.zipUrl
             }  
 })
 
@@ -88,14 +104,16 @@ app.post("/pack/generate", async(req, res)=> {
         });
         return
     }
-     const prompt = await prismaClient.packPrompts.findMany({
+     const prompts = await prismaClient.packPrompts.findMany({
         where: {    
             packId: parsedBody.packId
         }
     })
+
+    let requestIds: {request_id: string}[] = await Promise.all(prompts.map( (p)=> falAiModel.generateImage(p.prompt, parsedBody.modelId)));
     
     const data = await prismaClient.outputImages.createManyAndReturn({   
-        data: prompt.map((p)=> {
+        data: prompts.map((p)=> {
             return {
                 prompt: p.prompt,
                 userId: USER_ID,
