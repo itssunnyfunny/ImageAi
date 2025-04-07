@@ -3,6 +3,7 @@ import { TrainModel ,GenerateImage, GenerateImagesFromPack} from "common/types";
 import {prismaClient} from 'db';
 import { FalAiModel } from "./Models/FalAiModel";
 import { S3Client } from "bun";
+import { fal } from "@fal-ai/client";
  
 let USER_ID = "1";
 const falAiModel = new FalAiModel();
@@ -113,18 +114,19 @@ app.post("/pack/generate", async(req, res)=> {
     let requestIds: {request_id: string}[] = await Promise.all(prompts.map( (p)=> falAiModel.generateImage(p.prompt, parsedBody.modelId)));
     
     const data = await prismaClient.outputImages.createManyAndReturn({   
-        data: prompts.map((p)=> {
+        data: prompts.map((p, index)=> {
             return {
                 prompt: p.prompt,
                 userId: USER_ID,
                 modelId: parsedBody.modelId,
-                imageUrl: ""
+                imageUrl: "",
+                falAiRequestId: requestIds[index]!.request_id, // fix ts error
             }
         })
     })
 
     res.json({
-        images: data.map((d)=> d.id),
+        images: data.map((image)=> image.id),
         message: "Image pack generated successfully"
     })
 })
