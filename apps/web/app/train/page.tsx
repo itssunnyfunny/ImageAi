@@ -1,7 +1,8 @@
-
+"use client";
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
+import UploadImage from "@/components/ui/upload"
 import {
   Card,
   CardContent,
@@ -20,17 +21,18 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
+import { Upload } from "lucide-react"
 
 export default function Train() {
   return (
     <div className="flex h-screen items-center justify-center">
-    <Card className="w-[350px]">
+    <Card className="w-[350px] px-4">
       <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Name</Label>
@@ -90,8 +92,11 @@ export default function Train() {
               <Label htmlFor="name">Bald</Label>
                <Switch id="name" />
           </div>
+          <div>
+            <UploadImage />
           </div>
-        </form>
+          </div>
+        
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline">Cancel</Button>
