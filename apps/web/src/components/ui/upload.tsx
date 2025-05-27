@@ -24,8 +24,8 @@ export default function UpoadImage() {
 
                 console.log(input.files);
 
-            const res =    await axios.get(`${BACKEND_URL}/pre-sign`);
-             const presignedUrl = res.data.presignedUrl;
+            const res =    await axios.get(`${BACKEND_URL}/pre-signed-url`);
+  
              const url = res.data.url;
 
               if(input.files){
@@ -39,7 +39,7 @@ export default function UpoadImage() {
                const formData = new FormData();
                formData.append("file", content);
                formData.append("key", url)
-               const res = await axios.post(presignedUrl, formData);
+               const res = await axios.put(url, formData);
                console.log(res.data);
         
             }
