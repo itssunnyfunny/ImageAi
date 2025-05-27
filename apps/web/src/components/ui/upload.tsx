@@ -3,6 +3,10 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import axios from "axios";
+import { BACKEND_URL } from "../../../app/config";
+import JSZip, { file } from "jszip";
+import { log } from "console";
 
 export default function UpoadImage() {
   return (
@@ -15,11 +19,33 @@ export default function UpoadImage() {
             input.accept = 'image/*';
             input.multiple = true;
 
-            input.onchange = () => {
+            input.onchange = async () => {
+              const zip = new JSZip();
+
                 console.log(input.files);
+
+            const res =    await axios.get(`${BACKEND_URL}/pre-sign`);
+             const presignedUrl = res.data.presignedUrl;
+             const url = res.data.url;
+
+              if(input.files){
+             for (const file of input.files) {
+              const content = await file.arrayBuffer();
+              const zipFile =  zip.file(file.name, content);
+              
+                }
+
+               const content = await zip.generateAsync({type: "blob"});
+               const formData = new FormData();
+               formData.append("file", content);
+               formData.append("key", url)
+               const res = await axios.post(presignedUrl, formData);
+               console.log(res.data);
+        
             }
             input.click();
-        }}>Select Files</Button>
+          }
+        }}> Select Files</Button>
       </CardContent>
     </Card>
   )
