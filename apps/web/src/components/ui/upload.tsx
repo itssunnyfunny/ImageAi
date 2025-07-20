@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import axios from "axios";
 import { BACKEND_URL } from "../../../app/config";
 import JSZip, { file } from "jszip";
-import { log } from "console";
 
 export default function UpoadImage() {
   return (
